@@ -1,26 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Canvas, ThreeElements } from '@react-three/fiber'
+import Box from './components/Box'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App(props: ThreeElements['mesh']) {
+	return (
+		<Canvas style={{ border: '1px solid black', width: '600px', height: '600px' }}>
+			<ambientLight />
+			<pointLight position={[10, 10, 10]} />
+			<Box position={[-1.2, 0, 0]} />
+			<Box position={[1.2, 0, 0]} />
+		</Canvas>
+	)
 }
 
-export default App;
+export default App
