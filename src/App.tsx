@@ -5,13 +5,16 @@ import Bowl from './components/Bowl'
 
 function App(props: ThreeElements['mesh']) {
 	const bowlRadius = 3.5
+	const ballRadius = 0.2
 
 	return (
 		<Canvas style={{ border: '1px solid black', width: '600px', height: '600px' }}>
 			<axesHelper args={[10]} />
 			<ambientLight />
 			<pointLight position={[10, 10, 10]} />
-			<Ball position={[0, 0, 0]} />
+			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
+			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
+			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
 			<Bowl scale={bowlRadius} />
 		</Canvas>
 	)
