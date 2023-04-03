@@ -1,13 +1,17 @@
-import React, { useRef } from 'react'
-import { Canvas, ThreeElements, useFrame } from '@react-three/fiber'
+import React from 'react'
+import { ThreeElements, useFrame } from '@react-three/fiber'
 import Ball from './components/Ball'
 import Bowl from './components/Bowl'
-import * as THREE from 'three'
-import { Mesh, Vector3 } from 'three'
+import { Color, Mesh, Vector3 } from 'three'
 
 function App(props: ThreeElements['mesh']) {
 	const bowlRadius = 3.5
 	const ballRadius = 0.2
+
+	let colors = Object.keys(Color.NAMES) as Array<keyof typeof Color.NAMES>
+	const ballColors = Array(20)
+		.fill('')
+		.map((el) => colors[Math.floor(Math.random() * colors.length)])
 
 	useFrame((state, delta) => {
 		let balls: Mesh[] = state.scene.children.filter((el: any) => el?.userData?.customType === 'ball') as Mesh[]
@@ -38,11 +42,12 @@ function App(props: ThreeElements['mesh']) {
 			for (let j = i + 1; j < balls.length; j++) {
 				let ball1 = balls[i]
 				let ball2 = balls[j]
-				let distSq = ball1.position.distanceToSquared(ball2.position)
+				let dist = ball1.position.distanceTo(ball2.position)
 
 				// balls not colliding
-				if (distSq > (ballRadius * 2) ** 2) continue
+				if (dist > ballRadius * 2) continue
 
+				// calculate velocities after collision
 				let normal = ball1.position.clone().sub(ball2.position).normalize()
 				let tangent = new Vector3(-normal.y, normal.x, 0)
 				let vel_center = ball1.userData.velocity.clone().add(ball2.userData.velocity).divideScalar(2)
@@ -57,24 +62,12 @@ function App(props: ThreeElements['mesh']) {
 				ball1.userData.velocity.set(vel_center.x + cx, vel_center.y + cy, 0)
 				ball2.userData.velocity.set(vel_center.x - cx, vel_center.y - cy, 0)
 
-				// balls crammed deep into eachother - push them apart
-				if (distSq < (ballRadius * 0.5) ** 2) {
-					const unstuckPower = ((ballRadius * 2) ** 2 - distSq) * 0.1
-					const unstuckDist = ballRadius * 2
-					let v1 = ball1.position.clone().sub(ball2.position).setLength(unstuckPower)
-					let v2 = ball2.position.clone().sub(ball1.position).setLength(unstuckPower)
-					let p1 = ball1.position.clone().sub(ball2.position).setLength(unstuckDist)
-					let p2 = ball2.position.clone().sub(ball1.position).setLength(unstuckDist)
-					ball1.position.add(p1)
-					ball2.position.add(p2)
-					ball1.userData.velocity.add(v1)
-					ball2.userData.velocity.add(v2)
-				}
-
-				// balls hardstuck or spawned into each other - tp one of them
-				if (distSq < (ballRadius * 0.1) ** 2) {
-					ball2.position.set(Math.floor(Math.random() * (1 * 2)) - 1, Math.floor(Math.random() * (1 * 2)) - 1, 0)
-				}
+				// reposition balls to touching points - prevents clipping or getting stuck into each other
+				let pos_center = ball1.position.clone().add(ball2.position).divideScalar(2)
+				let v1 = ball1.position.clone().sub(pos_center).setLength(ballRadius)
+				let v2 = ball2.position.clone().sub(pos_center).setLength(ballRadius)
+				ball1.position.copy(pos_center.clone().add(v1))
+				ball2.position.copy(pos_center.clone().add(v2))
 
 				break
 			}
@@ -86,11 +79,10 @@ function App(props: ThreeElements['mesh']) {
 			<axesHelper args={[10]} />
 			<ambientLight />
 			<pointLight position={[10, 10, 10]} />
-			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
-			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
-			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
-			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
-			<Ball ballRadius={ballRadius} bowlRadius={bowlRadius} />
+			{ballColors.map((color, i) => (
+				<Ball key={i} ballRadius={ballRadius} bowlRadius={bowlRadius} color={color} />
+			))}
+
 			<Bowl scale={bowlRadius} />
 		</>
 	)
