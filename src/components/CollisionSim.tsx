@@ -5,7 +5,7 @@ import Bowl from './Bowl'
 import { Color, Mesh, Vector3 } from 'three'
 
 function CollisionSim(props: { position?: Vector3; gravity?: number }) {
-	const gravityPull = props.gravity || 0.0002
+	const gravityPull = props.gravity || 10
 	const bowlRadius = 3.5
 	const ballRadius = 0.2
 	const centerPos = props.position || new Vector3(0, 0, 0)
@@ -27,7 +27,7 @@ function CollisionSim(props: { position?: Vector3; gravity?: number }) {
 			}
 
 			// gravity
-			ball.userData.velocity.y -= gravityPull
+			ball.userData.velocity.y -= gravityPull * delta
 
 			// collision with bowl
 			if (ball.position.distanceTo(centerPos) >= bowlRadius - ballRadius) {
@@ -36,7 +36,7 @@ function CollisionSim(props: { position?: Vector3; gravity?: number }) {
 				ball.userData.velocity = directionVector
 			}
 
-			ball.position.add(ball.userData.velocity)
+			ball.position.add(ball.userData.velocity.clone().multiplyScalar(delta))
 		}
 
 		// check ball collisions

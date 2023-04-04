@@ -13,7 +13,7 @@ root.render(
 			<axesHelper args={[10]} />
 			<ambientLight />
 
-			<CollisionSim position={new Vector3(0, 0, 0)} gravity={0.0003} />
+			<CollisionSim position={new Vector3(0, 0, 0)} gravity={9} />
 		</Canvas>
 	</React.StrictMode>
 )
