@@ -1,12 +1,14 @@
 import React from 'react'
-import { ThreeElements, useFrame } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import Ball from './Ball'
 import Bowl from './Bowl'
 import { Color, Mesh, Vector3 } from 'three'
 
-function CollisionSim(props: ThreeElements['mesh']) {
+function CollisionSim(props: { position?: Vector3; gravity?: number }) {
+	const gravityPull = props.gravity || 0.0002
 	const bowlRadius = 3.5
 	const ballRadius = 0.2
+	const centerPos = props.position || new Vector3(0, 0, 0)
 
 	let colors = Object.keys(Color.NAMES) as Array<keyof typeof Color.NAMES>
 	const ballColors = Array(20)
@@ -14,7 +16,7 @@ function CollisionSim(props: ThreeElements['mesh']) {
 		.map((el) => colors[Math.floor(Math.random() * colors.length)])
 
 	useFrame((state, delta) => {
-		let balls: Mesh[] = state.scene.children.filter((el: any) => el?.userData?.customType === 'ball') as Mesh[]
+		let balls: Mesh[] = state.scene.children.filter((el: any) => el?.userData?.customType === 'collisionSim-ball') as Mesh[]
 
 		for (let ball of balls) {
 			// set up new object
@@ -25,11 +27,11 @@ function CollisionSim(props: ThreeElements['mesh']) {
 			}
 
 			// gravity
-			ball.userData.velocity.y -= 0.0001
+			ball.userData.velocity.y -= gravityPull
 
 			// collision with bowl
-			if (ball.position.distanceTo(new Vector3(0, 0, 0)) >= bowlRadius - ballRadius) {
-				let collisionPoint = ball.position.clone().sub(new Vector3(0, 0, 0)).setLength(bowlRadius).add(ball.position)
+			if (ball.position.distanceTo(centerPos) >= bowlRadius - ballRadius) {
+				let collisionPoint = ball.position.clone().sub(centerPos).setLength(bowlRadius).add(ball.position)
 				let directionVector = ball.position.clone().sub(collisionPoint).setLength(ball.userData.velocity.length())
 				ball.userData.velocity = directionVector
 			}
@@ -76,14 +78,10 @@ function CollisionSim(props: ThreeElements['mesh']) {
 
 	return (
 		<>
-			<axesHelper args={[10]} />
-			<ambientLight />
-			<pointLight position={[10, 10, 10]} />
 			{ballColors.map((color, i) => (
-				<Ball key={i} ballRadius={ballRadius} bowlRadius={bowlRadius} color={color} />
+				<Ball key={i} ballRadius={ballRadius} bowlRadius={bowlRadius} bowlCenter={centerPos} color={color} />
 			))}
-
-			<Bowl scale={bowlRadius} />
+			<Bowl scale={bowlRadius} center={centerPos} />
 		</>
 	)
 }

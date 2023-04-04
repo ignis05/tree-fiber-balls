@@ -12,11 +12,13 @@ declare global {
 	}
 }
 
-function Bowl(props: { scale?: number }) {
+function Bowl(props: { scale?: number; center?: THREE.Vector3 }) {
+	const scale = props.scale || 1
+	const center = props.center || new THREE.Vector3(0, 0, 0)
 	let g = new THREE.BufferGeometry().setFromPoints(new THREE.Path().absarc(0, 0, 1, 0, Math.PI * 2, true).getSpacedPoints(128))
 	let m = new THREE.LineBasicMaterial({ color: 'black' })
 
-	return <line_ args={[g, m]} {...props} />
+	return <line_ args={[g, m]} scale={scale} position={center} />
 }
 
 export default Bowl

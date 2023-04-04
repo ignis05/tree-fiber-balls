@@ -4,12 +4,16 @@ import './index.css'
 import CollisionSim from './components/CollisionSim'
 import reportWebVitals from './reportWebVitals'
 import { Canvas } from '@react-three/fiber'
+import { Vector3 } from 'three'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
 	<React.StrictMode>
 		<Canvas style={{ border: '1px solid black', width: '600px', height: '600px' }}>
-			<CollisionSim />
+			<axesHelper args={[10]} />
+			<ambientLight />
+
+			<CollisionSim position={new Vector3(0, 0, 0)} gravity={0.0003} />
 		</Canvas>
 	</React.StrictMode>
 )
