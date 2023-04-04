@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import App from './App'
+import CollisionSim from './components/CollisionSim'
 import reportWebVitals from './reportWebVitals'
 import { Canvas } from '@react-three/fiber'
 
@@ -9,7 +9,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
 	<React.StrictMode>
 		<Canvas style={{ border: '1px solid black', width: '600px', height: '600px' }}>
-			<App />
+			<CollisionSim />
 		</Canvas>
 	</React.StrictMode>
 )

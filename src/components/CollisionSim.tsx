@@ -1,10 +1,10 @@
 import React from 'react'
 import { ThreeElements, useFrame } from '@react-three/fiber'
-import Ball from './components/Ball'
-import Bowl from './components/Bowl'
+import Ball from './Ball'
+import Bowl from './Bowl'
 import { Color, Mesh, Vector3 } from 'three'
 
-function App(props: ThreeElements['mesh']) {
+function CollisionSim(props: ThreeElements['mesh']) {
 	const bowlRadius = 3.5
 	const ballRadius = 0.2
 
@@ -88,4 +88,4 @@ function App(props: ThreeElements['mesh']) {
 	)
 }
 
-export default App
+export default CollisionSim
