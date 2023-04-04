@@ -16,6 +16,7 @@ function CollisionSim(props: { position?: Vector3; gravity?: number }) {
 		.map((el) => colors[Math.floor(Math.random() * colors.length)])
 
 	useFrame((state, delta) => {
+		if (delta > 0.1) delta = 0.1
 		let balls: Mesh[] = state.scene.children.filter((el: any) => el?.userData?.customType === 'collisionSim-ball') as Mesh[]
 
 		for (let ball of balls) {
