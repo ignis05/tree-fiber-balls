@@ -1,46 +1,21 @@
-# Getting Started with Create React App
+# Zadanie: Wizualizacja symulacji zderzeń
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Uruchomienie projektu:
 
-## Available Scripts
+1. Instalacja pakietów przez `npm i`
+2. Uruchomienie wersji developerskiej przez `npm run start` lub budowa pod produkcję przez `npm run build`  
+   <br/>
 
-In the project directory, you can run:
+Build hostowany jest również na github pages: https://ignis05.github.io/tree-fiber-balls/
 
-### `npm start`
+<hr/>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Napotkane problemy:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Aktualizacje prędkości i pozycji odbywają się co klatkę, przy użyciu delty zegara w celu utrzymania poprawnego zachowania przy skokach klatek. Przy przełączaniu karty, po powrocie i wznowieniu animacji, delta potrafi być na poziomie parunastu sekund, co powoduje przeskoczenie kul daleko poza krawędzie symulacji. W celu uniknięcia takiego zachowania, maksymalna wartość delta została ograniczona do 0.1s, co za to może spowodować spadki prędkości animacji na urządzeniach niepotrafiących utrzymać 10FPS.
+- Jedyną siłą w układzie jest siła grawitacji. Kolizje z krawędzią oraz z innymi kulami nie powodują żadnych strat energii, jedynie zmianę kierunku lub bezstratny jej transfer między kulami. W rezultacie działanie układu nie spowalnia z czasem, a wręcz potrafi przyspieszyć przez błędy zaokrągleń i uproszczeń obliczeń fizycznych.
+- Układ znajduje się w komponencie `CollisionSim`. Pozycję układu we wszystkich 3 osiach można ustawić za pomocą jego propów, jednak układ zawsze operuje w płaszczyźnie x-y, ignorując oś z. Konsekwencją tego jest brak możliwości obrotu układu względem żadnej z osi.
+- Początkowa wersja systemu kolizji między kulami powodowała problemy gdy kule pojawiły się wewnątrz siebie lub zbyt głęboko zbliżyły się środkami przed odbiciem. Poprawiony system kolizji "teleportuje" kulę do punktu idealnego styku po obliczeniu nowych prędkości. Wyeliminowało to przypadki "sklejenia" kul.
+- Początkowo przy tworzeniu kolizji między kulami, zastosowałem zwykłe `THREE.Vector3.reflect()`. Jednak po głębszym przeanalizowaniu zauważyłem, że ta metoda na kolizję nie przenosi energii między kulami, jedynie zmienia kierunek ich ruchu: obie traktują się wzajemnie jako statyczny nieporuszalny obiekt. Kolizję poprawiłem, używając dokładnego wzoru na zderzenie sprężyste z transferem energii.
+- Pozycję, prędkości i kolizję wszystkich kul są przeliczane w jednej funkcji `useFrame`. Kule są zbierane z `state.scene.children` dzięki identyfikującemu je parametrowi w `userData` mesh. W tym samym miejscu jest też zapisana ich prędkość. Takie rozwiązanie upraszcza dostęp do wszystkich kul oraz aktualizacje ich prędkości, jednak przy większym projekcie należy się upewnić, że identyfikujący je parametr `mesh.userData.customType` nie powtarza się nigdzie w projekcie. Przy bardzo dużym projekcie zawierającym ogromną ilość elementów na jednej scenie, można by też rozważyć wpływ filtrowania tablicy `scene.children` na wydajność.
+- Próba użycia `THREE.Line` do narysowania okręgu granicznego powodowała błąd. Po wyszukaniu problemu dowiedziałem się, że komponent `line` jest wbudowanym komponentem jsx, i w celu wykorzystania komponentu `THREE.Line` należy nadać mu alternatywny alias np. `line_`, co rozwiązało mój problem.
