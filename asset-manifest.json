@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/tree-fiber-balls/static/css/main.e6c13ad2.css",
+    "main.js": "/tree-fiber-balls/static/js/main.a60b43a0.js",
+    "static/js/787.1216879b.chunk.js": "/tree-fiber-balls/static/js/787.1216879b.chunk.js",
+    "index.html": "/tree-fiber-balls/index.html",
+    "main.e6c13ad2.css.map": "/tree-fiber-balls/static/css/main.e6c13ad2.css.map",
+    "main.a60b43a0.js.map": "/tree-fiber-balls/static/js/main.a60b43a0.js.map",
+    "787.1216879b.chunk.js.map": "/tree-fiber-balls/static/js/787.1216879b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.a60b43a0.js"
+  ]
+}
